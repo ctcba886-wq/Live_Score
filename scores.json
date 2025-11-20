@@ -1,0 +1,32 @@
+{
+    "boards": [
+        {
+            "boardNumber": 1,
+            "openRoom": {
+                "contract": "3N",
+                "scoreNS": 430,
+                "scoreEW": -430
+            },
+            "closedRoom": {
+                "contract": "3N",
+                "scoreNS": 400,
+                "scoreEW": -400
+            },
+            "diff": {
+                "ns": 30,
+                "ew": -30
+            },
+            "imp": {
+                "ns": 1,
+                "ew": -1
+            }
+        }
+    ],
+    "totals": {
+        "impNS": 1,
+        "impEW": -1,
+        "resultVP": "",
+        "totalIMPFinal": "",
+        "finalResult": ""
+    }
+}
