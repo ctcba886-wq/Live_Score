@@ -44,8 +44,8 @@ def process_scoresheet_data(boards_to_play, source_excel_path_arg, score_sheet_n
         print(f"[{time.ctime()}] Could not copy file '{source_excel_path_arg}'. It may be locked. Skipping. Error: {e}")
         return False
     except FileNotFoundError:
-        print(f"[{time.ctime()}] Source file not found at: '{source_excel_path_arg}'. Please check the path.")
-        return False
+        print(f"[{time.ctime()}] FATAL ERROR: Source Excel file not found at: '{source_excel_path_arg}'. Please ensure the file exists and the path is correct.")
+        raise SystemExit(1) # Terminate the script immediately if the source Excel file is not found
 
     # --- 2. Read and Process Data from Copied File ---
     try:
