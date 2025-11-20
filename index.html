@@ -219,32 +219,7 @@
         return VULNERABILITY_MAP[VULNERABILITY_PATTERN[(boardNumber - 1) % 16]];
     }
 
-    function createInitialTable() {
-        const tableBody = document.getElementById('scores-table-body');
-        tableBody.innerHTML = '';
-        for (let i = 1; i <= 16; i++) {
-            const vul = getVulnerability(i);
-            const row = document.createElement('tr');
-            row.id = `board-${i}`;
-            row.innerHTML = `
-                <td>${i}</td>
-                <td class="${vul.class}">${vul.text}</td>
-                <td id="b${i}-open-contract"></td>
-                <td id="b${i}-open-ns"></td>
-                <td id="b${i}-open-ew"></td>
-                <td id="b${i}-closed-contract"></td>
-                <td id="b${i}-closed-ns"></td>
-                <td id="b${i}-closed-ew"></td>
-                <td id="b${i}-diff-ns"></td>
-                <td id="b${i}-diff-ew"></td>
-                <td id="b${i}-imp-ns"></td>
-                <td id="b${i}-imp-ew"></td>
-                <td id="b${i}-cop-ns"></td>
-                <td id="b${i}-cop-ew"></td>
-            `;
-            tableBody.appendChild(row);
-        }
-    }
+
 
     async function updateScores() {
         const lastUpdatedElement = document.getElementById('last-updated');
@@ -254,8 +229,9 @@
             const config = await configResponse.json();
             
             // Update header info from config
-            document.getElementById('round-left').textContent = config.round || 'N/A';
-            document.getElementById('round-right').textContent = config.round || 'N/A';
+            const round = parseInt(config.round, 10) || 1;
+            document.getElementById('round-left').textContent = round;
+            document.getElementById('round-right').textContent = round;
             document.getElementById('event-name').textContent = config.eventName || 'Bridge Match';
             
             const homeTeam = config.home;
@@ -270,34 +246,44 @@
             document.getElementById('away-ns-players').textContent = 'NS: ' + (awayTeam?.ns_players?.join(', ') || '');
             document.getElementById('away-ew-players').textContent = 'EW: ' + (awayTeam?.ew_players?.join(', ') || '');
 
-            // Update table headers with team names
-            const homeTeamName = homeTeam?.name || '';
-            const awayTeamName = awayTeam?.name || '';
+            // Update table headers
             document.getElementById('diff-team-header').textContent = 'Home';
             document.getElementById('diff-opp-header').textContent = 'Away';
             document.getElementById('imp-team-header').textContent = 'Home';
             document.getElementById('imp-opp-header').textContent = 'Away';
 
+            // Determine board range and create table
+            const startBoard = (round % 2 === 1) ? 1 : 17;
+            const tableBody = document.getElementById('scores-table-body');
+            tableBody.innerHTML = ''; // Clear the table body before recreating rows
+
+            for (let i = 0; i < 16; i++) {
+                const boardNumber = startBoard + i;
+                const vul = getVulnerability(boardNumber);
+                const row = document.createElement('tr');
+                row.id = `board-${boardNumber}`;
+                row.innerHTML = `
+                    <td>${boardNumber}</td>
+                    <td class="${vul.class || ''}">${vul.text}</td>
+                    <td id="b${boardNumber}-open-contract"></td>
+                    <td id="b${boardNumber}-open-ns"></td>
+                    <td id="b${boardNumber}-open-ew"></td>
+                    <td id="b${boardNumber}-closed-contract"></td>
+                    <td id="b${boardNumber}-closed-ns"></td>
+                    <td id="b${boardNumber}-closed-ew"></td>
+                    <td id="b${boardNumber}-diff-ns"></td>
+                    <td id="b${boardNumber}-diff-ew"></td>
+                    <td id="b${boardNumber}-imp-ns"></td>
+                    <td id="b${boardNumber}-imp-ew"></td>
+                    <td id="b${boardNumber}-cop-ns"></td>
+                    <td id="b${boardNumber}-cop-ew"></td>
+                `;
+                tableBody.appendChild(row);
+            }
 
             const scoresResponse = await fetch(`scores.json?t=${new Date().getTime()}`);
             if (!scoresResponse.ok) throw new Error(`HTTP error! status: ${scoresResponse.status}`);
             const scores = await scoresResponse.json();
-
-            // Clear the table before populating new scores to prevent stale data
-            for (let i = 1; i <= 16; i++) {
-                document.getElementById(`b${i}-open-contract`).textContent = '';
-                document.getElementById(`b${i}-open-ns`).textContent = '';
-                document.getElementById(`b${i}-open-ew`).textContent = '';
-                document.getElementById(`b${i}-closed-contract`).textContent = '';
-                document.getElementById(`b${i}-closed-ns`).textContent = '';
-                document.getElementById(`b${i}-closed-ew`).textContent = '';
-                document.getElementById(`b${i}-diff-ns`).textContent = '';
-                document.getElementById(`b${i}-diff-ew`).textContent = '';
-                document.getElementById(`b${i}-imp-ns`).textContent = '';
-                document.getElementById(`b${i}-imp-ew`).textContent = '';
-                document.getElementById(`b${i}-cop-ns`).textContent = '';
-                document.getElementById(`b${i}-cop-ew`).textContent = '';
-            }
 
             let totalImpNs = 0;
             let totalImpEw = 0;
@@ -305,26 +291,29 @@
             // Populate scores
             scores.boards.forEach(board => {
                 const i = board.boardNumber;
-                document.getElementById(`b${i}-open-contract`).textContent = board.openRoom?.contract || '';
-                document.getElementById(`b${i}-open-ns`).textContent = board.openRoom?.scoreNS || '';
-                document.getElementById(`b${i}-open-ew`).textContent = board.openRoom?.scoreEW || '';
-                document.getElementById(`b${i}-closed-contract`).textContent = board.closedRoom?.contract || '';
-                document.getElementById(`b${i}-closed-ns`).textContent = board.closedRoom?.scoreNS || '';
-                document.getElementById(`b${i}-closed-ew`).textContent = board.closedRoom?.scoreEW || '';
-                document.getElementById(`b${i}-diff-ns`).textContent = board.diff?.ns || '';
-                document.getElementById(`b${i}-diff-ew`).textContent = board.diff?.ew || '';
-                document.getElementById(`b${i}-imp-ns`).textContent = board.imp?.ns || '';
-                document.getElementById(`b${i}-imp-ew`).textContent = board.imp?.ew || '';
-                document.getElementById(`b${i}-cop-ns`).textContent = board.cop?.ns || '';
-                document.getElementById(`b${i}-cop-ew`).textContent = board.cop?.ew || '';
-                
-                totalImpNs += Number(board.imp?.ns) || 0;
-                totalImpEw += Number(board.imp?.ew) || 0;
+                // Only populate data for boards in the current range
+                if (document.getElementById(`b${i}-open-contract`)) {
+                    document.getElementById(`b${i}-open-contract`).textContent = board.openRoom?.contract || '';
+                    document.getElementById(`b${i}-open-ns`).textContent = board.openRoom?.scoreNS || '';
+                    document.getElementById(`b${i}-open-ew`).textContent = board.openRoom?.scoreEW || '';
+                    document.getElementById(`b${i}-closed-contract`).textContent = board.closedRoom?.contract || '';
+                    document.getElementById(`b${i}-closed-ns`).textContent = board.closedRoom?.scoreNS || '';
+                    document.getElementById(`b${i}-closed-ew`).textContent = board.closedRoom?.scoreEW || '';
+                    document.getElementById(`b${i}-diff-ns`).textContent = board.diff?.ns || '';
+                    document.getElementById(`b${i}-diff-ew`).textContent = board.diff?.ew || '';
+                    document.getElementById(`b${i}-imp-ns`).textContent = board.imp?.ns || '';
+                    document.getElementById(`b${i}-imp-ew`).textContent = board.imp?.ew || '';
+                    document.getElementById(`b${i}-cop-ns`).textContent = board.cop?.ns || '';
+                    document.getElementById(`b${i}-cop-ew`).textContent = board.cop?.ew || '';
+                    
+                    totalImpNs += Number(board.imp?.ns) || 0;
+                    totalImpEw += Number(board.imp?.ew) || 0;
+                }
             });
             
-            // Populate totals from scores.json if they exist, otherwise use calculated values
-            document.getElementById('total-imp-ns').textContent = scores.totals?.impNS ?? totalImpNs;
-            document.getElementById('total-imp-ew').textContent = scores.totals?.impEW ?? totalImpEw;
+            // Populate totals from scores.json if they exist
+            document.getElementById('total-imp-ns').textContent = scores.totals?.impNS ?? '';
+            document.getElementById('total-imp-ew').textContent = scores.totals?.impEW ?? '';
 
             // Final results can also be populated from the JSON
             document.getElementById('result-vp').textContent = scores.totals?.resultVP || '';
@@ -341,10 +330,7 @@
     }
 
     // --- Main Execution ---
-    // 1. Create the table structure on page load.
-    createInitialTable();
-    
-    // 2. Update the scores immediately when the page loads.
+    // 1. Update the scores immediately when the page loads.
     updateScores();
     
     // 3. Set an interval to automatically refresh the scores.
