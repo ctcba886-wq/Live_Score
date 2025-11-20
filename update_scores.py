@@ -58,7 +58,7 @@ def process_scoresheet_data(boards_to_play, source_excel_path_arg, score_sheet_n
             row_index = 9 + (i - 1) * 3
             
             board_data = {
-                "boardNumber": i,
+                "boardNumber": int(df.iloc[row_index, 0]),  # Col A
                 "openRoom": { 
                     "contract": df.iloc[row_index, 6],  # Col G
                     "scoreNS": df.iloc[row_index, 12], # Col M
@@ -119,6 +119,23 @@ def process_scoresheet_data(boards_to_play, source_excel_path_arg, score_sheet_n
         if os.path.exists(TEMP_EXCEL_PATH):
             os.remove(TEMP_EXCEL_PATH)
 
+def generate_blank_scores_file():
+    """Creates a blank scores.json file to clear old data on startup."""
+    blank_data = {
+        "boards": [],
+        "totals": {
+            "impNS": None, "impEW": None,
+            "resultVP": None, "totalIMPFinal": None,
+            "finalResult": None
+        }
+    }
+    try:
+        with open(OUTPUT_SCORES_PATH, 'w', encoding='utf-8') as f:
+            json.dump(blank_data, f, ensure_ascii=False, indent=4)
+        print(f"[{time.ctime()}] Generated a blank {OUTPUT_SCORES_PATH} to clear old scores.")
+    except Exception as e:
+        print(f"[{time.ctime()}] WARNING: Could not generate a blank scores file. Error: {e}")
+
 if __name__ == "__main__":
     config = load_config()
     boards_per_round = config.get('boards_per_round', 16) # Default to 16 if not found
@@ -140,9 +157,21 @@ if __name__ == "__main__":
     print(f"Boards per round: {boards_per_round}")
     print(f"Watching Excel file: {SOURCE_EXCEL_PATH_DYNAMIC}, sheet: {SCORE_SHEET_NAME_DYNAMIC}")
     print(f"Polling every {POLLING_INTERVAL_SECONDS} seconds. Press Ctrl+C to stop.")
+    print("This script will automatically terminate after 2 hours.")
+
+    # Generate a blank scores file on startup to clear old data
+    generate_blank_scores_file()
+
+    start_time = time.time()
+    timeout_seconds = 2 * 60 * 60
     
     while True:
         try:
+            # Timeout check
+            if time.time() - start_time > timeout_seconds:
+                print(f"[{time.ctime()}] Script has been running for 2 hours. Terminating automatically.")
+                break
+
             match_is_complete = process_scoresheet_data(boards_per_round, SOURCE_EXCEL_PATH_DYNAMIC, SCORE_SHEET_NAME_DYNAMIC)
             if match_is_complete:
                 print(f"[{time.ctime()}] All scores entered for {boards_per_round} boards. Final update complete. Stopping.")
