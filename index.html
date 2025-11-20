@@ -173,8 +173,8 @@
                 <th id="diff-opp-header"></th>
                 <th id="imp-team-header"></th>
                 <th id="imp-opp-header"></th>
-                <th>NS</th>
-                <th>EW</th>
+                <th>Home</th>
+                <th>Away</th>
             </tr>
         </thead>
         <tbody id="scores-table-body">
@@ -204,10 +204,10 @@
     const REFRESH_INTERVAL_MS = 5000;
 
     const VULNERABILITY_MAP = {
-        0: { text: '-', class: 'vul-none' },    // None
-        1: { text: 'NS', class: 'vul-ns' },     // NS
-        2: { text: 'EW', class: 'vul-ew' },     // EW
-        3: { text: 'All', class: 'vul-both' }    // Both
+        0: { text: 'None' },    // None
+        1: { text: 'NS' },     // NS
+        2: { text: 'EW' },     // EW
+        3: { text: 'All' }    // Both
     };
     
     // Standard 16-board vulnerability pattern
