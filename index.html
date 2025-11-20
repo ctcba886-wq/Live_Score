@@ -193,7 +193,7 @@
 </div>
 
 <script>
-    const REFRESH_INTERVAL_MS = 5000;
+
 
     const VULNERABILITY_MAP = {
         0: { text: 'None' },    // None
@@ -317,7 +317,7 @@
 
         } catch (error) {
             console.error("Failed to fetch or process scores:", error);
-            lastUpdatedElement.textContent = "Error loading scores. Will retry...";
+            // Do not update lastUpdatedElement.textContent on error, keep the last successful time
         }
     }
 
@@ -326,7 +326,7 @@
     updateScores();
     
     // 3. Set an interval to automatically refresh the scores.
-    setInterval(updateScores, REFRESH_INTERVAL_MS);
+
 </script>
 
 </body>
