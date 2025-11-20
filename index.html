@@ -120,8 +120,14 @@
     </header>
 
     <div class="players-bar">
-        <div id="team-players">Player 1, Player 2</div>
-        <div id="opponent-players" style="text-align: right;">Player 3, Player 4</div>
+        <div class="players-container" id="home-players-container">
+            <div id="home-ns-players"></div>
+            <div id="home-ew-players"></div>
+        </div>
+        <div class="players-container" id="away-players-container" style="text-align: right;">
+            <div id="away-ns-players"></div>
+            <div id="away-ew-players"></div>
+        </div>
     </div>
     <div class="matchup-bar">
         <div id="team-name" class="team-name"></div>
@@ -243,9 +249,13 @@
             document.getElementById('team-name').textContent = homeTeam?.name || '';
             document.getElementById('opponent-name').textContent = awayTeam?.name || '';
 
-            // Display NS players, assuming this is the primary pair for the main display.
-            document.getElementById('team-players').textContent = homeTeam?.ns_players?.join(', ') || 'Players';
-            document.getElementById('opponent-players').textContent = awayTeam?.ns_players?.join(', ') || 'Opponent Players';
+            // Display Home players (NS and EW)
+            document.getElementById('home-ns-players').textContent = 'NS: ' + (homeTeam?.ns_players?.join(', ') || '');
+            document.getElementById('home-ew-players').textContent = 'EW: ' + (homeTeam?.ew_players?.join(', ') || '');
+
+            // Display Away players (NS and EW)
+            document.getElementById('away-ns-players').textContent = 'NS: ' + (awayTeam?.ns_players?.join(', ') || '');
+            document.getElementById('away-ew-players').textContent = 'EW: ' + (awayTeam?.ew_players?.join(', ') || '');
 
             // Update table headers with team names
             const homeTeamName = homeTeam?.name || '';
