@@ -158,7 +158,6 @@
                 <th rowspan="2">身價</th>
                 <th colspan="3">公開室</th>
                 <th colspan="3">關閉室</th>
-                <th colspan="2">差數</th>
                 <th colspan="2">IMP</th>
                 <th colspan="2">COP</th>
             </tr>
@@ -169,8 +168,6 @@
                 <th>合約及結果</th>
                 <th>NS</th>
                 <th>EW</th>
-                <th id="diff-team-header"></th>
-                <th id="diff-opp-header"></th>
                 <th id="imp-team-header"></th>
                 <th id="imp-opp-header"></th>
                 <th>Home</th>
@@ -182,17 +179,17 @@
         </tbody>
         <tfoot>
             <tr>
-                <td colspan="8" class="footer-total" style="text-align: right;">總計 IMP</td>
+                <td colspan="6" class="footer-total" style="text-align: right;">總計 IMP</td>
                 <td id="total-imp-ns" class="footer-total"></td>
                 <td id="total-imp-ew" class="footer-total"></td>
                 <td rowspan="3" colspan="2" class="result-cell" id="final-result"></td>
             </tr>
              <tr>
-                <td colspan="8" style="text-align: right;">結果</td>
+                <td colspan="6" style="text-align: right;">結果</td>
                 <td colspan="2" id="result-vp"></td>
             </tr>
             <tr>
-                <td colspan="8" style="text-align: right;">合計IMP</td>
+                <td colspan="6" style="text-align: right;">合計IMP</td>
                 <td colspan="2" id="total-imp-final"></td>
             </tr>
         </tfoot>
@@ -247,8 +244,6 @@
             document.getElementById('away-ew-players').textContent = 'EW: ' + (awayTeam?.ew_players?.join(', ') || '');
 
             // Update table headers
-            document.getElementById('diff-team-header').textContent = 'Home';
-            document.getElementById('diff-opp-header').textContent = 'Away';
             document.getElementById('imp-team-header').textContent = 'Home';
             document.getElementById('imp-opp-header').textContent = 'Away';
 
@@ -271,8 +266,6 @@
                     <td id="b${boardNumber}-closed-contract"></td>
                     <td id="b${boardNumber}-closed-ns"></td>
                     <td id="b${boardNumber}-closed-ew"></td>
-                    <td id="b${boardNumber}-diff-ns"></td>
-                    <td id="b${boardNumber}-diff-ew"></td>
                     <td id="b${boardNumber}-imp-ns"></td>
                     <td id="b${boardNumber}-imp-ew"></td>
                     <td id="b${boardNumber}-cop-ns"></td>
@@ -299,8 +292,6 @@
                     document.getElementById(`b${i}-closed-contract`).textContent = board.closedRoom?.contract || '';
                     document.getElementById(`b${i}-closed-ns`).textContent = board.closedRoom?.scoreNS || '';
                     document.getElementById(`b${i}-closed-ew`).textContent = board.closedRoom?.scoreEW || '';
-                    document.getElementById(`b${i}-diff-ns`).textContent = board.diff?.ns || '';
-                    document.getElementById(`b${i}-diff-ew`).textContent = board.diff?.ew || '';
                     document.getElementById(`b${i}-imp-ns`).textContent = board.imp?.ns || '';
                     document.getElementById(`b${i}-imp-ew`).textContent = board.imp?.ew || '';
                     document.getElementById(`b${i}-cop-ns`).textContent = board.cop?.ns || '';
