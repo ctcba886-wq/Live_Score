@@ -42,15 +42,38 @@
             border: 2px solid #000;
             padding: 5px 20px;
         }
-        .info-bar {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            padding: 5px 0;
+        .players-bar {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            padding: 5px 20px;
+            font-size: 1.1em;
+            color: #555;
+            box-sizing: border-box;
+        }
+        .matchup-bar {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px;
             font-size: 1.2em;
+            font-weight: 500;
+            border-bottom: 1px solid #ccc;
+            margin-bottom: 10px;
+            width: 100%;
+            box-sizing: border-box;
         }
-        .info-bar div {
-            padding: 0 10px;
+        .matchup-bar .team-name {
+            font-weight: bold;
+            font-size: 1.3em;
+            padding: 0 20px;
         }
+        .matchup-bar .vs {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #888;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
@@ -96,13 +119,14 @@
         <div id="round-right" class="round">1</div>
     </header>
 
-    <div class="info-bar">
-        <div>NS: <span id="team-ns"></span></div>
-        <div style="text-align: right;">NS: <span id="opponent-ns"></span></div>
+    <div class="players-bar">
+        <div id="team-players">Player 1, Player 2</div>
+        <div id="opponent-players" style="text-align: right;">Player 3, Player 4</div>
     </div>
-    <div class="info-bar">
-        <div>EW: <span id="team-ew"></span></div>
-        <div style="text-align: right;">EW: <span id="opponent-ew"></span></div>
+    <div class="matchup-bar">
+        <div id="team-name" class="team-name"></div>
+        <div class="vs">vs</div>
+        <div id="opponent-name" class="team-name"></div>
     </div>
 
 
@@ -124,10 +148,10 @@
                 <th>合約及結果</th>
                 <th>NS</th>
                 <th>EW</th>
-                <th>NS</th>
-                <th>EW</th>
-                <th>NS</th>
-                <th>EW</th>
+                <th id="diff-team-header"></th>
+                <th id="diff-opp-header"></th>
+                <th id="imp-team-header"></th>
+                <th id="imp-opp-header"></th>
                 <th>NS</th>
                 <th>EW</th>
             </tr>
@@ -212,10 +236,25 @@
             document.getElementById('round-left').textContent = config.round || 'N/A';
             document.getElementById('round-right').textContent = config.round || 'N/A';
             document.getElementById('event-name').textContent = config.eventName || 'Bridge Match';
-            document.getElementById('team-ns').textContent = config.teams?.ns || 'Team A';
-            document.getElementById('team-ew').textContent = config.teams?.ew || 'Team B';
-            document.getElementById('opponent-ns').textContent = config.opponents?.ns || 'Opponent A';
-            document.getElementById('opponent-ew').textContent = config.opponents?.ew || 'Opponent B';
+            
+            const homeTeam = config.home;
+            const awayTeam = config.away;
+
+            document.getElementById('team-name').textContent = homeTeam?.name || '';
+            document.getElementById('opponent-name').textContent = awayTeam?.name || '';
+
+            // Display NS players, assuming this is the primary pair for the main display.
+            document.getElementById('team-players').textContent = homeTeam?.ns_players?.join(', ') || 'Players';
+            document.getElementById('opponent-players').textContent = awayTeam?.ns_players?.join(', ') || 'Opponent Players';
+
+            // Update table headers with team names
+            const homeTeamName = homeTeam?.name || '';
+            const awayTeamName = awayTeam?.name || '';
+            document.getElementById('diff-team-header').textContent = homeTeamName;
+            document.getElementById('diff-opp-header').textContent = awayTeamName;
+            document.getElementById('imp-team-header').textContent = homeTeamName;
+            document.getElementById('imp-opp-header').textContent = awayTeamName;
+
 
             const scoresResponse = await fetch(`scores.json?t=${new Date().getTime()}`);
             if (!scoresResponse.ok) throw new Error(`HTTP error! status: ${scoresResponse.status}`);

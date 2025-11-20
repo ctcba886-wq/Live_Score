@@ -1,12 +1,15 @@
 {
     "round": "1",
     "eventName": "2022亞運第一階段培訓三角對抗T2",
-    "teams": {
-        "ns": "中華男子A",
-        "ew": "中華男子B"
+    "boards_per_round": 16,
+    "home": {
+        "name": "中華男子隊",
+        "ns_players": ["Player 1A", "Player 1B"],
+        "ew_players": ["Player 2A", "Player 2B"]
     },
-    "opponents": {
-        "ns": "中華女子A",
-        "ew": "中華女子B"
+    "away": {
+        "name": "中華女子隊",
+        "ns_players": ["Opponent 1A", "Opponent 1B"],
+        "ew_players": ["Opponent 2A", "Opponent 2B"]
     }
 }

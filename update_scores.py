@@ -7,12 +7,13 @@ import json
 # --- Internal Script Configuration ---
 # This section contains private settings, like file paths and polling intervals,
 # which are not meant to be changed by the end-user.
-SOURCE_EXCEL_PATH = 'source.xlsx'
 TEMP_EXCEL_PATH = 'temp_scores.xlsx'
-SCORE_SHEET_NAME = 'Scores' # The name of the sheet in the Excel file to read
 POLLING_INTERVAL_SECONDS = 300 # 5 minutes
 CONFIG_FILE_PATH = 'config.json'
 OUTPUT_SCORES_PATH = 'scores.json'
+
+# Load sensitive information (like a GitHub token) from environment variables
+GITHUB_TOKEN = os.getenv('GITHUB_TOKEN')
 
 def load_config():
     """
@@ -29,91 +30,124 @@ def load_config():
         print(f"FATAL ERROR: Could not parse '{CONFIG_FILE_PATH}'. Please ensure it is a valid JSON.")
         exit()
 
-def process_scoresheet_data():
+def process_scoresheet_data(boards_to_play, source_excel_path_arg, score_sheet_name_arg):
     """
     Safely copies the Excel file, reads the detailed scoresheet data based on
     a predefined structure, and writes it to the scores.json file.
+    Returns True if the match is complete, False otherwise.
     """
+    is_complete = False
     # --- 1. Safe File Copy ---
     try:
-        shutil.copy(SOURCE_EXCEL_PATH, TEMP_EXCEL_PATH)
+        shutil.copy(source_excel_path_arg, TEMP_EXCEL_PATH)
     except (IOError, PermissionError) as e:
-        print(f"[{time.ctime()}] Could not copy file '{SOURCE_EXCEL_PATH}'. It may be locked. Skipping. Error: {e}")
-        return
+        print(f"[{time.ctime()}] Could not copy file '{source_excel_path_arg}'. It may be locked. Skipping. Error: {e}")
+        return False
     except FileNotFoundError:
-        print(f"[{time.ctime()}] Source file not found at: '{SOURCE_EXCEL_PATH}'. Please check the path.")
-        return
+        print(f"[{time.ctime()}] Source file not found at: '{source_excel_path_arg}'. Please check the path.")
+        return False
 
     # --- 2. Read and Process Data from Copied File ---
     try:
-        # Note: The data extraction logic below is a placeholder. It assumes a very specific,
-        # non-standard Excel layout and will likely need to be adjusted to match the
-        # actual scoresheet format. It reads data from fixed cell positions.
-        df = pd.read_excel(TEMP_EXCEL_PATH, sheet_name=SCORE_SHEET_NAME, header=None)
+        df = pd.read_excel(TEMP_EXCEL_PATH, sheet_name=score_sheet_name_arg, header=None)
         
         boards_data = []
-        for i in range(1, 17): # Assuming boards 1-16
-            # This logic IS A PLACEHOLDER and needs to be adapted for the real .xlsx file.
+        for i in range(1, boards_to_play + 1):
+            # Row index is based on the user's specification:
+            # Board 1 starts at row 10 (index 9), and each subsequent board is 3 rows down.
+            row_index = 9 + (i - 1) * 3
+            
             board_data = {
                 "boardNumber": i,
-                "openRoom": {
-                    "contract": df.iloc[i + 2, 2], "scoreNS": df.iloc[i + 2, 3], "scoreEW": df.iloc[i + 2, 4]
+                "openRoom": { 
+                    "contract": df.iloc[row_index, 6],  # Col G
+                    "scoreNS": df.iloc[row_index, 12], # Col M
+                    "scoreEW": df.iloc[row_index, 15]  # Col P
                 },
-                "closedRoom": {
-                    "contract": df.iloc[i + 2, 5], "scoreNS": df.iloc[i + 2, 6], "scoreEW": df.iloc[i + 2, 7]
+                "closedRoom": { 
+                    "contract": df.iloc[row_index, 18], # Col S
+                    "scoreNS": df.iloc[row_index, 24], # Col Y
+                    "scoreEW": df.iloc[row_index, 27]  # Col AB
                 },
-                "diff": { "ns": df.iloc[i + 2, 8], "ew": df.iloc[i + 2, 9] },
-                "imp": { "ns": df.iloc[i + 2, 10], "ew": df.iloc[i + 2, 11] }
+                "diff": { 
+                    "ns": df.iloc[row_index, 30], # Col AE
+                    "ew": df.iloc[row_index, 33]  # Col AH
+                },
+                "imp": { 
+                    "ns": df.iloc[row_index, 36], # Col AK
+                    "ew": df.iloc[row_index, 39]  # Col AN
+                }
             }
+            # Convert pandas NA/NaN to Python None for JSON serialization
+            for top_key in ["openRoom", "closedRoom", "diff", "imp"]:
+                for sub_key, value in board_data[top_key].items():
+                    if pd.isna(value):
+                        board_data[top_key][sub_key] = None
+            
             boards_data.append(board_data)
 
-        # Placeholder for extracting totals from the sheet
+        # Totals locations are unknown, so set to None.
         totals = {
-            "impNS": df.iloc[20, 9], "impEW": df.iloc[20, 10],
-            "resultVP": df.iloc[21, 9], "totalIMPFinal": df.iloc[22, 9],
-            "finalResult": df.iloc[20, 11]
+            "impNS": None, "impEW": None,
+            "resultVP": None, "totalIMPFinal": None,
+            "finalResult": None
         }
 
         output_data = {"boards": boards_data, "totals": totals}
 
-        # --- 3. Generate JSON Output ---
+        # --- 3. Check for Match Completion ---
+        # Condition: Open and Closed room contract cells for the last board are not empty.
+        last_board_row = 9 + (boards_to_play - 1) * 3
+        last_board_open_contract = df.iloc[last_board_row, 6]   # Col G
+        last_board_closed_contract = df.iloc[last_board_row, 18] # Col S
+
+        if (not pd.isna(last_board_open_contract) and str(last_board_open_contract).strip() != '' and
+            not pd.isna(last_board_closed_contract) and str(last_board_closed_contract).strip() != ''):
+            is_complete = True
+
+        # --- 4. Generate JSON Output ---
         with open(OUTPUT_SCORES_PATH, 'w', encoding='utf-8') as f:
-            # Custom JSON encoder to handle pandas/numpy data types that
-            # might result from reading the Excel file.
-            class NpEncoder(json.JSONEncoder):
-                def default(self, obj):
-                    if pd.isna(obj): return None
-                    if isinstance(obj, (pd.Int64Dtype, pd.IntegerDtype)): return int(obj)
-                    if isinstance(obj, (pd.Float64Dtype, pd.Float32Dtype)): return float(obj)
-                    if isinstance(obj, (bool, pd.BooleanDtype)): return bool(obj)
-                    return super(NpEncoder, self).default(obj)
-            
-            json.dump(output_data, f, ensure_ascii=False, indent=4, cls=NpEncoder)
+            json.dump(output_data, f, ensure_ascii=False, indent=4)
 
         print(f"[{time.ctime()}] Successfully updated {OUTPUT_SCORES_PATH}.")
+        return is_complete
 
     except Exception as e:
         print(f"[{time.ctime()}] An error occurred while processing the Excel file: {e}")
+        return False
     finally:
         if os.path.exists(TEMP_EXCEL_PATH):
             os.remove(TEMP_EXCEL_PATH)
 
 if __name__ == "__main__":
-    # Load the user-editable config file to ensure it's valid on startup.
-    # The 'config' variable itself is not directly used in the processing loop,
-    # as the frontend fetches it, but loading it here acts as a sanity check.
     config = load_config()
+    boards_per_round = config.get('boards_per_round', 16) # Default to 16 if not found
+    event_name = config.get('eventName', 'DefaultEvent')
+    current_round = config.get('round', '1')
+
+    # Dynamically construct source Excel path and sheet name
+    SOURCE_EXCEL_PATH_DYNAMIC = f"{event_name}.xlsx"
+    SCORE_SHEET_NAME_DYNAMIC = f"R{current_round}"
     
     print("Starting the live score updater.")
-    print(f"Event Name: {config.get('eventName', 'N/A')}")
-    print(f"Watching for changes in: {SOURCE_EXCEL_PATH}")
+    if GITHUB_TOKEN:
+        print("Successfully loaded GITHUB_TOKEN from environment variables.")
+    else:
+        print("Warning: GITHUB_TOKEN environment variable not found. Proceeding without it.")
+    
+    print(f"Event Name: {event_name}")
+    print(f"Current Round: {current_round}")
+    print(f"Boards per round: {boards_per_round}")
+    print(f"Watching Excel file: {SOURCE_EXCEL_PATH_DYNAMIC}, sheet: {SCORE_SHEET_NAME_DYNAMIC}")
     print(f"Polling every {POLLING_INTERVAL_SECONDS} seconds. Press Ctrl+C to stop.")
     
-    # Start the polling loop to update scores.
-    # It runs once immediately, then repeats on the defined interval.
     while True:
         try:
-            process_scoresheet_data()
+            match_is_complete = process_scoresheet_data(boards_per_round, SOURCE_EXCEL_PATH_DYNAMIC, SCORE_SHEET_NAME_DYNAMIC)
+            if match_is_complete:
+                print(f"[{time.ctime()}] All scores entered for {boards_per_round} boards. Final update complete. Stopping.")
+                break
+            
             time.sleep(POLLING_INTERVAL_SECONDS)
         except KeyboardInterrupt:
             print("\nStopping the score updater. Goodbye!")
