@@ -195,9 +195,24 @@ if __name__ == "__main__":
     print(f"Polling every {POLLING_INTERVAL_SECONDS} seconds. Press Ctrl+C to stop.")
     print("---------------------------------")
 
-    generate_blank_scores_file()
+    # --- Initial Uploads ---
     if GITHUB_TOKEN and REPO_SLUG:
-        upload_file_to_github(OUTPUT_SCORES_PATH, GITHUB_TOKEN, REPO_SLUG, f"Initial empty scores for Round {current_round}")
+        print(f"[{time.ctime()}] Performing initial file uploads...")
+        upload_file_to_github(
+            CONFIG_FILE_PATH, 
+            GITHUB_TOKEN, 
+            REPO_SLUG, 
+            f"Upload event configuration for {event_name}"
+        )
+        generate_blank_scores_file()
+        upload_file_to_github(
+            OUTPUT_SCORES_PATH, 
+            GITHUB_TOKEN, 
+            REPO_SLUG, 
+            f"Initial empty scores for Round {current_round}"
+        )
+    else:
+        generate_blank_scores_file()
 
     start_time = time.time()
     timeout_seconds = 2 * 60 * 60
