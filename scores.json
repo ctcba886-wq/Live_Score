@@ -3,30 +3,345 @@
         {
             "boardNumber": 1,
             "openRoom": {
-                "contract": "3N",
-                "scoreNS": 430,
-                "scoreEW": -430
+                "contract": "5HXE-2",
+                "scoreNS": 300,
+                "scoreEW": 0
             },
             "closedRoom": {
-                "contract": "3N",
-                "scoreNS": 400,
-                "scoreEW": -400
+                "contract": null,
+                "scoreNS": null,
+                "scoreEW": null
             },
             "diff": {
-                "ns": 30,
-                "ew": -30
+                "ns": null,
+                "ew": null
             },
             "imp": {
-                "ns": 1,
-                "ew": -1
+                "ns": null,
+                "ew": null
+            }
+        },
+        {
+            "boardNumber": 2,
+            "openRoom": {
+                "contract": null,
+                "scoreNS": null,
+                "scoreEW": null
+            },
+            "closedRoom": {
+                "contract": null,
+                "scoreNS": null,
+                "scoreEW": null
+            },
+            "diff": {
+                "ns": null,
+                "ew": null
+            },
+            "imp": {
+                "ns": null,
+                "ew": null
+            }
+        },
+        {
+            "boardNumber": 3,
+            "openRoom": {
+                "contract": null,
+                "scoreNS": null,
+                "scoreEW": null
+            },
+            "closedRoom": {
+                "contract": null,
+                "scoreNS": null,
+                "scoreEW": null
+            },
+            "diff": {
+                "ns": null,
+                "ew": null
+            },
+            "imp": {
+                "ns": null,
+                "ew": null
+            }
+        },
+        {
+            "boardNumber": 4,
+            "openRoom": {
+                "contract": null,
+                "scoreNS": null,
+                "scoreEW": null
+            },
+            "closedRoom": {
+                "contract": null,
+                "scoreNS": null,
+                "scoreEW": null
+            },
+            "diff": {
+                "ns": null,
+                "ew": null
+            },
+            "imp": {
+                "ns": null,
+                "ew": null
+            }
+        },
+        {
+            "boardNumber": 5,
+            "openRoom": {
+                "contract": null,
+                "scoreNS": null,
+                "scoreEW": null
+            },
+            "closedRoom": {
+                "contract": null,
+                "scoreNS": null,
+                "scoreEW": null
+            },
+            "diff": {
+                "ns": null,
+                "ew": null
+            },
+            "imp": {
+                "ns": null,
+                "ew": null
+            }
+        },
+        {
+            "boardNumber": 6,
+            "openRoom": {
+                "contract": null,
+                "scoreNS": null,
+                "scoreEW": null
+            },
+            "closedRoom": {
+                "contract": null,
+                "scoreNS": null,
+                "scoreEW": null
+            },
+            "diff": {
+                "ns": null,
+                "ew": null
+            },
+            "imp": {
+                "ns": null,
+                "ew": null
+            }
+        },
+        {
+            "boardNumber": 7,
+            "openRoom": {
+                "contract": null,
+                "scoreNS": null,
+                "scoreEW": null
+            },
+            "closedRoom": {
+                "contract": null,
+                "scoreNS": null,
+                "scoreEW": null
+            },
+            "diff": {
+                "ns": null,
+                "ew": null
+            },
+            "imp": {
+                "ns": null,
+                "ew": null
+            }
+        },
+        {
+            "boardNumber": 8,
+            "openRoom": {
+                "contract": null,
+                "scoreNS": null,
+                "scoreEW": null
+            },
+            "closedRoom": {
+                "contract": null,
+                "scoreNS": null,
+                "scoreEW": null
+            },
+            "diff": {
+                "ns": null,
+                "ew": null
+            },
+            "imp": {
+                "ns": null,
+                "ew": null
+            }
+        },
+        {
+            "boardNumber": 9,
+            "openRoom": {
+                "contract": null,
+                "scoreNS": null,
+                "scoreEW": null
+            },
+            "closedRoom": {
+                "contract": null,
+                "scoreNS": null,
+                "scoreEW": null
+            },
+            "diff": {
+                "ns": null,
+                "ew": null
+            },
+            "imp": {
+                "ns": null,
+                "ew": null
+            }
+        },
+        {
+            "boardNumber": 10,
+            "openRoom": {
+                "contract": null,
+                "scoreNS": null,
+                "scoreEW": null
+            },
+            "closedRoom": {
+                "contract": null,
+                "scoreNS": null,
+                "scoreEW": null
+            },
+            "diff": {
+                "ns": null,
+                "ew": null
+            },
+            "imp": {
+                "ns": null,
+                "ew": null
+            }
+        },
+        {
+            "boardNumber": 11,
+            "openRoom": {
+                "contract": null,
+                "scoreNS": null,
+                "scoreEW": null
+            },
+            "closedRoom": {
+                "contract": null,
+                "scoreNS": null,
+                "scoreEW": null
+            },
+            "diff": {
+                "ns": null,
+                "ew": null
+            },
+            "imp": {
+                "ns": null,
+                "ew": null
+            }
+        },
+        {
+            "boardNumber": 12,
+            "openRoom": {
+                "contract": null,
+                "scoreNS": null,
+                "scoreEW": null
+            },
+            "closedRoom": {
+                "contract": null,
+                "scoreNS": null,
+                "scoreEW": null
+            },
+            "diff": {
+                "ns": null,
+                "ew": null
+            },
+            "imp": {
+                "ns": null,
+                "ew": null
+            }
+        },
+        {
+            "boardNumber": 13,
+            "openRoom": {
+                "contract": null,
+                "scoreNS": null,
+                "scoreEW": null
+            },
+            "closedRoom": {
+                "contract": null,
+                "scoreNS": null,
+                "scoreEW": null
+            },
+            "diff": {
+                "ns": null,
+                "ew": null
+            },
+            "imp": {
+                "ns": null,
+                "ew": null
+            }
+        },
+        {
+            "boardNumber": 14,
+            "openRoom": {
+                "contract": null,
+                "scoreNS": null,
+                "scoreEW": null
+            },
+            "closedRoom": {
+                "contract": null,
+                "scoreNS": null,
+                "scoreEW": null
+            },
+            "diff": {
+                "ns": null,
+                "ew": null
+            },
+            "imp": {
+                "ns": null,
+                "ew": null
+            }
+        },
+        {
+            "boardNumber": 15,
+            "openRoom": {
+                "contract": null,
+                "scoreNS": null,
+                "scoreEW": null
+            },
+            "closedRoom": {
+                "contract": null,
+                "scoreNS": null,
+                "scoreEW": null
+            },
+            "diff": {
+                "ns": null,
+                "ew": null
+            },
+            "imp": {
+                "ns": null,
+                "ew": null
+            }
+        },
+        {
+            "boardNumber": 16,
+            "openRoom": {
+                "contract": null,
+                "scoreNS": null,
+                "scoreEW": null
+            },
+            "closedRoom": {
+                "contract": null,
+                "scoreNS": null,
+                "scoreEW": null
+            },
+            "diff": {
+                "ns": null,
+                "ew": null
+            },
+            "imp": {
+                "ns": null,
+                "ew": null
             }
         }
     ],
     "totals": {
-        "impNS": 1,
-        "impEW": -1,
-        "resultVP": "",
-        "totalIMPFinal": "",
-        "finalResult": ""
+        "impNS": null,
+        "impEW": null,
+        "resultVP": null,
+        "totalIMPFinal": null,
+        "finalResult": null
     }
 }
